@@ -1,0 +1,6 @@
+RewriteEngine on
+
+# RÈGLES DE RÉ-ÉCRITURE
+RewriteRule ^coucou$ page1.php [L] 
+RewriteRule ^oufti$ page2.php [L]
+RewriteRule ^products/([1-9][0-9]*)/[a-z0-9][a-z0-9\-]*[a-z0-9]$ page3.php?productID=$1 [L]

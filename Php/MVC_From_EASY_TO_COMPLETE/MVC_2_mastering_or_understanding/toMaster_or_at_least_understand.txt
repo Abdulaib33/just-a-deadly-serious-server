@@ -1,0 +1,450 @@
+app/config/params.php:
+
+<?php
+
+// PARAMÈTRES DE CONNEXION
+define('DB_NAME', "retro_monsters_2025");
+define('DB_HOST', "localhost");
+define('DB_USER', "root");
+define('DB_PASSWORD', "becode");
+
+
+app/controllers/monstersController.php :
+
+<?php
+
+namespace App\Controllers\MonstersController;
+
+use \App\Models\MonstersModel;
+use \PDO;
+
+function indexAction(PDO $connexion)
+{
+    include_once '../app/models/monstersModel.php';
+    $monsters = MonstersModel\findAll($connexion);
+
+    global $content;
+    ob_start();
+    include '../app/views/monsters/index.php';
+    $content = ob_get_clean();
+}
+
+function showAction(PDO $connexion, int $id)
+{
+    include_once '../app/models/monstersModel.php';
+    $monster = MonstersModel\findOneById($connexion, $id);
+
+    global $content;
+    ob_start();
+    include '../app/views/monsters/show.php';
+    $content = ob_get_clean();
+}
+
+
+app/controllers/usersController.php :
+
+<?php
+
+namespace App\Controllers\UsersController;
+
+use \App\Models\UsersModel;
+use \PDO;
+
+function indexAction(PDO $connexion)
+{
+    include_once '../app/models/usersModel.php';
+    $users = UsersModel\findAll($connexion);
+
+    global $content;
+    ob_start();
+    include '../app/views/users/index.php';
+    $content = ob_get_clean();
+}
+
+function showAction(PDO $connexion, int $id)
+{
+    include_once '../app/models/usersModel.php';
+    $user = UsersModel\findOneById($connexion, $id);
+
+    global $content;
+    ob_start();
+    include '../app/views/users/show.php';
+    $content = ob_get_clean();
+}
+
+
+app/models/monstersModel.php:
+
+<?php
+
+namespace App\Models\MonstersModel;
+
+use \PDO;
+
+function findAll(PDO $connexion): array
+{
+    $sql = "SELECT *
+            FROM monsters
+            ORDER BY created_at DESC
+            LIMIT 10;";
+    $rs = $connexion->query($sql);
+    return $rs->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function findOneById(PDO $connexion, int $id): array
+{
+    $sql = "SELECT *
+            FROM monsters
+            WHERE id = :id;";
+    $rs = $connexion->prepare($sql);
+    $rs->bindValue(':id', $id, PDO::PARAM_INT);
+    $rs->execute();
+    return $rs->fetch(PDO::FETCH_ASSOC);
+}
+
+
+app/models/raretiesModel.php:
+
+<?php
+
+namespace App\Models\RaretiesModel;
+
+use \PDO;
+
+function findAll(PDO $connexion): array
+{
+    $sql = "SELECT *
+            FROM rareties
+            ORDER BY name ASC;";
+    $rs = $connexion->query($sql);
+    return $rs->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+app/models/typesModel.php:
+
+<?php
+
+namespace App\Models\TypesModel;
+
+use \PDO;
+
+function findAll(PDO $connexion): array
+{
+    $sql = "SELECT *
+            FROM monster_types
+            ORDER BY name ASC;";
+    $rs = $connexion->query($sql);
+    return $rs->fetchAll(PDO::FETCH_ASSOC);
+}
+
+
+
+app/models/usersModel.php:
+
+<?php
+
+namespace App\Models\UsersModel;
+
+use \PDO;
+
+function findAll(PDO $connexion): array
+{
+    $sql = "SELECT *
+            FROM users
+            ORDER BY pseudo ASC;";
+    $rs = $connexion->query($sql);
+    return $rs->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function findOneById(PDO $connexion, int $id): array
+{
+    $sql = "SELECT *
+            FROM users
+            WHERE id = :id;";
+    $rs = $connexion->prepare($sql);
+    $rs->bindValue(':id', $id, PDO::PARAM_INT);
+    $rs->execute();
+    return $rs->fetch(PDO::FETCH_ASSOC);
+}
+
+
+app/routers/index.php:
+
+<?php
+
+// ROUTES DES USERS
+if (isset($_GET['users'])):
+    include_once '../app/routers/users.php';
+
+// ROUTES DES MONSTERS
+elseif (isset($_GET['monsters'])):
+    include_once '../app/routers/monsters.php';
+
+else:
+    // ROUTE PAR DEFAUT
+    // PATTERN: /
+    // CTRL: monstersController
+    // ACTION: index
+    include_once '../app/controllers/monstersController.php';
+    \App\Controllers\MonstersController\indexAction($connexion);
+endif;
+
+
+
+app/routers/monsters.php:
+
+<?php
+
+use \App\Controllers\MonstersController;
+
+include_once '../app/controllers/monstersController.php';
+
+switch ($_GET['monsters']):
+        // ?monsters=show&id=x
+    case 'show':
+        MonstersController\showAction($connexion, $_GET['id']);
+        break;
+    default:
+        MonstersController\indexAction($connexion);
+        break;
+endswitch;
+
+
+app/routers/users.php:
+
+<?php
+
+use \App\Controllers\UsersController;
+
+include_once '../app/controllers/usersController.php';
+
+switch ($_GET['users']):
+        // ?users=show&id=x
+    case 'show':
+        UsersController\showAction($connexion, $_GET['id']);
+        break;
+    default:
+        UsersController\indexAction($connexion);
+        break;
+endswitch;
+
+
+app/views/monsters/index.php:
+
+<h2>Monsters List</h2>
+<ul>
+    <?php foreach ($monsters as $monster): ?>
+        <li>
+            <a href="?monsters=show&id=<?php echo $monster['id']; ?>">
+                <?php echo $monster['name']; ?>
+            </a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
+
+app/views/monsters/show.php:
+
+<h2><?php echo $monster['name']; ?> - ID: <?php echo $monster['id']; ?></h2>
+<ul>
+    <li>PV: <?php echo $monster['pv']; ?></li>
+    <li>Attack: <?php echo $monster['attack']; ?></li>
+    <li>Defense: <?php echo $monster['defense']; ?></li>
+</ul>
+<p><?php echo $monster['description']; ?></p>
+
+
+app/views/rareties/_index.php:
+
+<h3>Rareties</h3>
+<ul>
+    <?php foreach ($rareties as $rarety): ?>
+        <li>
+            <a href="">
+                <?php echo $rarety['name']; ?>
+            </a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
+
+app/views/templates/partials/_footer.php:
+
+<footer class="page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col l6 s12">
+                <h5 class="white-text">Footer Content</h5>
+                <p class="grey-text text-lighten-4">
+                    You can use rows and columns here to organize your footer content.
+                </p>
+            </div>
+            <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                    <li><a class="grey-text text-lighten-3" href="#!">Link 1</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Link 2</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Link 3</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Link 4</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            © 2014 Copyright Text
+            <a class="grey-text text-lighten-4 right" href="#!">More Links</a>
+        </div>
+
+    </div>
+</footer>
+
+
+app/views/templates/partials/_head.php:
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RetroMonster</title>
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+
+
+app/views/templates/partials/_header.php:
+
+
+<header>
+    <nav>
+        <div class="nav-wrapper container">
+            <a href="?" class="brand-logo">RetroMonsters</a>
+            <ul id="nav-mobile" class="right">
+                <li><a href="?">Monsters</a></li>
+                <li><a href="?users">Users</a></li>
+                <li><a href="">RetroMonsters Project</a></li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+
+app/views/templates/partials/_main.php:
+
+
+<main class="container row">
+    <div class="col m8">
+        <?php echo $content; ?>
+    </div>
+
+    <aside class="col m4">
+        <?php
+        include_once '../app/models/typesModel.php';
+        $types = \App\Models\TypesModel\findAll($connexion);
+        include '../app/views/types/_index.php';
+        ?>
+
+        <?php
+        include_once '../app/models/raretiesModel.php';
+        $rareties = \App\Models\RaretiesModel\findAll($connexion);
+        include '../app/views/rareties/_index.php';
+        ?>
+    </aside>
+
+</main>
+
+
+app/views/templates/default.php:
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php include '../app/views/templates/partials/_head.php'; ?>
+</head>
+
+<body>
+    <?php include '../app/views/templates/partials/_header.php'; ?>
+
+    <?php include '../app/views/templates/partials/_main.php'; ?>
+
+    <?php include '../app/views/templates/partials/_footer.php'; ?>
+</body>
+
+</html>
+
+
+app/views/types/_index.php:
+
+<h3>Types</h3>
+<ul>
+    <?php foreach ($types as $type): ?>
+        <li>
+            <a href="">
+                <?php echo $type['name']; ?>
+            </a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
+
+app/views/users/index.php:
+
+<h2>Liste des users</h2>
+
+<ul>
+    <?php foreach ($users as $user): ?>
+        <li>
+            <a href="?users=show&id=<?php echo $user['id']; ?>">
+                <?php echo $user['pseudo']; ?>
+            </a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
+
+app/views/users/show.php:
+
+<h2><?php echo $user['pseudo']; ?></h2>
+<ul>
+    <li>Email: <?php echo $user['email']; ?></li>
+    <li>Level: <?php echo $user['level']; ?></li>
+</ul>
+
+
+core/connection.php:
+
+<?php
+
+try {
+    $connexion = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASSWORD);
+} catch (PDOException $e) {
+    echo $e->message;
+    // echo "C'est bien balot mais y a un stuut !";
+}
+
+
+core/init.php:
+
+<?php
+
+// Chargement des paramètres
+// Chargement de la connexion
+
+require_once '../app/config/params.php';
+require_once '../core/connection.php';
+
+
+
+public/index.php:
+
+<?php
+
+// Chargement de l'init
+require_once '../core/init.php';
+
+// Chargement du router
+require_once '../app/routers/index.php';
+
+// Chargement du template
+require_once '../app/views/templates/default.php';

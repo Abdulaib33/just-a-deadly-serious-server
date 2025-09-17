@@ -1,0 +1,173 @@
+app/controllers/pagesController.php :
+
+<?php
+
+function contactsAction()
+{
+    global $content;
+    ob_start();
+    include '../app/views/pages/contacts.php';
+    $content = ob_get_clean();
+}
+
+
+app/controllers/productsController.php :
+
+<?php
+
+function indexAction()
+{
+    include '../app/models/productsModel.php';
+    $products = findAll();
+
+    global $content;
+    ob_start();
+    include '../app/views/products/index.php';
+    $content = ob_get_clean();
+}
+
+function showAction()
+{
+    include '../app/models/productsModel.php';
+    $product = findOneById($_GET['productID']);
+
+    global $content;
+    ob_start();
+    include '../app/views/products/show.php';
+    $content = ob_get_clean();
+}
+
+
+app/models/productsModel.php :
+
+<?php
+
+function findAll(): array
+{
+    // Ici devrait s'exécuter la requête
+    /* SELECT *
+       FROM products
+       ORDER BY name ASC; */
+    return [
+        ['id' => 1, 'name' => "Produit 1", 'price' => 19.90],
+        ['id' => 2, 'name' => "Product 2", 'price' => 29.90],
+        ['id' => 3, 'name' => "Product 3", 'price' => 39.90]
+    ];
+}
+
+function findOneById(int $id): array
+{
+    /* SELECT *
+       FROM products
+       WHERE id = $id; */
+    return ['id' => $id, 'name' => "Product $id", 'price' => 49.90];
+}
+
+
+
+
+
+
+app/routers/index.php :
+
+<?php
+// LE ROUTER
+// ROUTE CONTACTS
+// PATTERN: ?contacts
+if (isset($_GET['contacts'])):
+    include '../app/controllers/pagesController.php';
+    contactsAction();
+
+// ROUTE DETAIL D'UN PRODUIT
+// PATTERN: ?productID=x
+elseif (isset($_GET['productID'])):
+    include '../app/controllers/productsController.php';
+    showAction();
+
+// ROUTE PAR DÉFAUT
+// PATTERN: ?
+else:
+    include '../app/controllers/productsController.php';
+    indexAction();
+endif;
+
+
+
+app/views/pages/contacts.php :
+
+<h2>Page contacts</h2>
+<p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias similique amet unde expedita explicabo, minus autem maiores officiis saepe est ea ipsum voluptas placeat beatae ab facilis animi provident quod.</p>
+
+
+
+app/views/products/index.php :
+
+<h2>Liste des produits</h2>
+<ul>
+    <?php foreach ($products as $product): ?>
+        <li>
+            <a href='?productID=<?php echo $product['id']; ?>'>
+                <?php echo $product['name']; ?>
+            </a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
+
+app/views/products/show.php :
+
+<h2>
+    Détails du produit:
+    <?php echo $product['name']; ?>
+</h2>
+<div>Prix: <?php echo $product['price']; ?>€</div>
+
+
+app/views/templates/default.php :
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+        <h1>Mon beau site en MVC</h1>
+        <nav>
+            <ul>
+                <li><a href="?">Products</a></li>
+                <li><a href="?contacts">Contacts</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- ZONE DYNAMIQUE DU TEMPLATE -->
+        <?php echo $content; ?>
+    </main>
+
+    <footer>
+        EAFC 2025
+    </footer>
+</body>
+
+</html>
+
+
+
+public/index.php :
+
+<?php
+// DISPATCHER CENTRAL
+// ./public/index.php
+
+
+// 1. CHARGEMENT DU ROUTER
+require_once '../app/routers/index.php';
+
+// 2. CHARGEMENT DU TEMPLATE
+require_once '../app/views/templates/default.php';

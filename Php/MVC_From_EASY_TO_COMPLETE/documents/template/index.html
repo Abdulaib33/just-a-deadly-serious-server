@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RetroMonsters</title>
+    <link rel="icon" type="image/png" href="images/favico.png" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Creepster&family=Roboto:wght@100;400;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css"
+    />
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/nouislider/distribute/nouislider.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/nouislider/distribute/nouislider.min.js"></script>
+    <style>
+      .monster-card[data-monster-type="cosmique"] {
+        background: linear-gradient(to right, #6e48aa, #9d50bb);
+      }
+
+      .monster-card[data-monster-type="aquatique"] {
+        background: linear-gradient(to right, #395ca6, #546da4);
+      }
+
+      .monster-card[data-monster-type="terrestre"] {
+        background: linear-gradient(to right, #3a4146, #657581);
+      }
+
+      .monster-card[data-monster-type="volant"] {
+        background: linear-gradient(to right, #2e5063, #457791);
+      }
+
+      .monster-card[data-monster-type="spectral"] {
+        background: linear-gradient(to right, #7b195a, #9d3078);
+      }
+      body {
+        font-family: "Roboto", sans-serif;
+      }
+      .creepster {
+        font-family: "Creepster", system-ui;
+        font-size: 2rem;
+        letter-spacing: 0.2rem;
+      }
+
+      .noUi-connect {
+        background: #516ba4;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-800 text-white font-sans">
+    <!-- Header -->
+    <header
+      class="bg-gray-900 shadow-lg relative top-8"
+      x-data="{ open: false, loggedIn: true, userMenuOpen: false }"
+    >
+      <nav
+        class="container mx-auto px-4 py-4 mb-16 flex justify-between items-center"
+      >
+        <div class="flex items-center">
+          <a href="#">
+            <img
+              src="images/Logo_RetroMonsters.png"
+              alt="RetroMonsters Logo"
+              class="h-32 mr-3 absolute"
+              style="top: -28px"
+            />
+          </a>
+          <a href="#" class="text-white font-bold text-xl hidden"
+            >RetroMonsters</a
+          >
+        </div>
+
+        <button @click="open = !open" class="text-white md:hidden">
+          <i class="fa fa-bars"></i>
+        </button>
+
+        <div class="hidden md:flex items-center">
+          <a
+            class="text-gray-300 hover:text-white px-3 py-2 hover:bg-gray-700"
+            href="#"
+            >Monstres</a
+          >
+          <a
+            class="text-gray-300 hover:text-white px-3 py-2 hover:bg-gray-700 active"
+            href="#"
+            >Ajouter un monstre</a
+          >
+          <!-- <a
+            class="text-gray-300 hover:text-white px-3 py-2 hover:bg-gray-700"
+            href="#"
+            >Créateurs</a
+          > -->
+          <!-- <a
+            class="text-gray-300 hover:text-white px-3 py-2 hover:bg-gray-700"
+            href="#"
+            >Se connecter</a
+          > -->
+
+          <!-- Utilisation d'un bouton pour ouvrir le menu déroulant de l'utilisateur -->
+          <!-- <div class="relative" x-data="{ userMenuOpen: false }">
+            <button @click="userMenuOpen = !userMenuOpen" class="text-white">
+              <img src="images/user.webp" alt="" class="w-16" />
+            </button>
+
+            <div
+              x-show="userMenuOpen"
+              @click.away="userMenuOpen = false"
+              class="absolute right-0 mt-2 w-48 bg-gray-100 rounded-md shadow-lg pb-1 z-50"
+            >
+              <div class="text-gray-200 px-4 py-2 bg-gray-400 text-center">
+                Username
+              </div>
+              <a
+                href="#"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                >Mon Profil</a
+              >
+              <a
+                href="#"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                >Mon Deck</a
+              >
+              <a
+                href="#"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                >Ajouter un Monstre</a
+              >
+              <a
+                href="#"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                >Se Déconnecter</a
+              >
+            </div>
+          </div> -->
+        </div>
+      </nav>
+
+      <!-- Menu pour mobile -->
+      <div x-show="open" class="md:hidden p-8">
+        <a
+          class="block bg-gray-900 text-white px-4 py-2 hover:bg-gray-700"
+          href="#"
+          >Monstres</a
+        >
+        <a
+          class="block bg-gray-900 text-white px-4 py-2 hover:bg-gray-700"
+          href="#"
+          >Ajouter un monstre</a
+        >
+        <!-- <a
+          class="block bg-gray-900 text-white px-4 py-2 hover:bg-gray-700"
+          href="#"
+          >Se connecter</a
+        >
+        <a
+          class="block bg-gray-900 text-white px-4 py-2 hover:bg-gray-700"
+          href="#"
+          >Mon Profil</a
+        >
+        <a
+          class="block bg-gray-900 text-white px-4 py-2 hover:bg-gray-700"
+          href="#"
+          >Mon Deck</a
+        >
+        <a
+          class="block bg-gray-900 text-white px-4 py-2 hover:bg-gray-700"
+          href="#"
+          >Ajouter un Monstre</a
+        >
+        <a
+          class="block bg-gray-900 text-white px-4 py-2 hover:bg-gray-700"
+          href="#"
+          >Se Déconnecter</a
+        > -->
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mx-auto flex flex-wrap pt-4 pb-12">
+      <main class="w-full md:w-3/4 p-4">
+        <!-- Section Monstre Aléatoire -->
+        <section class="mb-20">
+          <div
+            class="bg-gray-700 rounded-lg shadow-lg monster-card"
+            data-monster-type="aquatique"
+          >
+            <div class="md:flex">
+              <!-- Image du monstre -->
+              <div class="w-full md:w-1/2 relative">
+                <img
+                  class="w-full h-full object-cover rounded-t-lg md:rounded-l-lg md:rounded-t-none"
+                  src="images/aqualizzard.png"
+                  alt="Nom du Monstre"
+                />
+                <div class="absolute top-4 right-4">
+                  <button
+                    class="text-white bg-gray-400 hover:bg-red-700 rounded-full p-2 transition-colors duration-300"
+                    style="
+                      width: 40px;
+                      height: 40px;
+                      display: flex;
+                      justify-content: center;
+                      align-items: center;
+                    "
+                  >
+                    <i class="fa fa-bookmark"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Détails du monstre -->
+              <div class="p-6 md:w-1/2">
+                <h2 class="text-3xl font-bold mb-2 creepster">
+                  Nom du Monstre
+                </h2>
+                <p class="text-gray-300 text-sm mb-4">
+                  Description détaillée du monstre, y compris son histoire, ses
+                  capacités, et tout ce qui le rend unique.
+                </p>
+                <div class="mb-4">
+                  <strong class="text-white">Créateur:</strong>
+                  <span class="text-red-400">Nom du Créateur</span>
+                </div>
+                <div class="mb-4">
+                  <div>
+                    <strong class="text-white">Type:</strong>
+                    <span class="text-gray-300">Aquatique</span>
+                  </div>
+                  <div>
+                    <strong class="text-white">PV:</strong>
+                    <span class="text-gray-300">150</span>
+                  </div>
+                  <div>
+                    <strong class="text-white">Attaque:</strong>
+                    <span class="text-gray-300">120</span>
+                  </div>
+                  <div>
+                    <strong class="text-white">Défense:</strong>
+                    <span class="text-gray-300">100</span>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <span class="text-yellow-400">★★★★☆</span>
+                  <span class="text-gray-300 text-sm">(4.0/5.0)</span>
+                </div>
+                <div class="">
+                  <a
+                    href="monster.html"
+                    class="inline-block text-white bg-red-500 hover:bg-red-700 rounded-full px-4 py-2 transition-colors duration-300"
+                    >Plus de détails</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section Derniers monstres -->
+        <section class="mb-20">
+          <h2 class="text-2xl font-bold mb-4 creepster">
+            Derniers monstres ajoutés
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- Monster Item -->
+            <article
+              class="relative bg-gray-700 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 monster-card"
+              data-monster-type="spectral"
+            >
+              <img
+                class="w-full h-48 object-cover rounded-t-lg"
+                src="images/aquadragon.png"
+                alt="AbyssalRevenant"
+              />
+              <div class="p-4">
+                <h3 class="text-xl font-bold">AbyssalRevenant</h3>
+                <h4 class="mb-2">
+                  <a href="#" class="text-red-400 hover:underline"
+                    >Alex Smith</a
+                  >
+                </h4>
+                <p class="text-gray-300 text-sm mb-2">
+                  Un monstre mystérieux des profondeurs.
+                </p>
+                <div class="flex justify-between items-center mb-2">
+                  <div>
+                    <span class="text-yellow-400">★★★★☆</span>
+                    <span class="text-gray-300 text-sm">(4.0/5.0)</span>
+                  </div>
+                  <span class="text-sm text-gray-300">Type: Aquatique</span>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                  <span class="text-sm text-gray-300">PV: 120</span>
+                  <span class="text-sm text-gray-300">Attaque: 80</span>
+                </div>
+                <div class="text-center">
+                  <a
+                    href="monster.html"
+                    class="inline-block text-white bg-red-500 hover:bg-red-700 rounded-full px-4 py-2 transition-colors duration-300"
+                    >Plus de détails</a
+                  >
+                </div>
+              </div>
+              <div class="absolute top-4 right-4">
+                <button
+                  class="text-white bg-gray-400 hover:bg-red-700 rounded-full p-2 transition-colors duration-300"
+                  style="
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <i class="fa fa-bookmark"></i>
+                </button>
+              </div>
+            </article>
+
+            <article
+              class="relative bg-gray-700 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 monster-card"
+              data-monster-type="terrestre"
+            >
+              <img
+                class="w-full h-48 object-cover rounded-t-lg"
+                src="images/shadowmonkey.png"
+                alt="AbyssalRevenant"
+              />
+              <div class="p-4">
+                <h3 class="text-xl font-bold">GrimmShadow</h3>
+                <h4 class="mb-2">
+                  <a href="#" class="text-red-400 hover:underline"
+                    >Alex Smith</a
+                  >
+                </h4>
+                <p class="text-gray-300 text-sm mb-2">
+                  Un monstre mystérieux des profondeurs.
+                </p>
+                <div class="flex justify-between items-center mb-2">
+                  <div>
+                    <span class="text-yellow-400">★★★★☆</span>
+                    <span class="text-gray-300 text-sm">(4.0/5.0)</span>
+                  </div>
+                  <span class="text-sm text-gray-300">Type: Terrestre</span>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                  <span class="text-sm text-gray-300">PV: 80</span>
+                  <span class="text-sm text-gray-300">Attaque: 140</span>
+                </div>
+                <div class="text-center">
+                  <a
+                    href="monster.html"
+                    class="inline-block text-white bg-red-500 hover:bg-red-700 rounded-full px-4 py-2 transition-colors duration-300"
+                    >Plus de détails</a
+                  >
+                </div>
+              </div>
+              <div class="absolute top-4 right-4">
+                <button
+                  class="text-white bg-red-500 hover:bg-red-700 rounded-full p-2 transition-colors duration-300"
+                  style="
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <i class="fa fa-bookmark"></i>
+                </button>
+              </div>
+            </article>
+
+            <article
+              class="relative rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 monster-card"
+              data-monster-type="cosmique"
+            >
+              <img
+                class="w-full h-48 object-cover rounded-t-lg"
+                src="images/spiritshade.png"
+                alt="CosmicGleam"
+              />
+              <div class="p-4">
+                <h3 class="text-xl font-bold">CosmicGleam</h3>
+                <h4 class="mb-2">
+                  <a href="#" class="text-red-400 hover:underline"
+                    >Alex Smith</a
+                  >
+                </h4>
+                <p class="text-gray-300 text-sm mb-2">
+                  Un monstre mystérieux des profondeurs.
+                </p>
+                <div class="flex justify-between items-center mb-2">
+                  <div>
+                    <span class="text-yellow-400">★★★★☆</span
+                    ><span class="text-gray-300 text-sm">(4.0/5.0)</span>
+                  </div>
+                  <span class="text-sm text-gray-300">Type: Cosmique</span>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                  <span class="text-sm text-gray-300">PV: 150</span>
+                  <span class="text-sm text-gray-300">Attaque: 100</span>
+                </div>
+                <div class="text-center">
+                  <a
+                    href="monster.html"
+                    class="inline-block text-white bg-red-500 hover:bg-red-700 rounded-full px-4 py-2 transition-colors duration-300"
+                    >Plus de détails</a
+                  >
+                </div>
+              </div>
+              <div class="absolute top-4 right-4">
+                <button
+                  class="text-white bg-red-500 hover:bg-red-700 rounded-full p-2 transition-colors duration-300"
+                  style="
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <i class="fa fa-bookmark"></i>
+                </button>
+              </div>
+            </article>
+
+            <!-- Répétez pour d'autres monstres -->
+          </div>
+        </section>
+      </main>
+
+      <!-- Sidebar -->
+      <aside class="w-full md:w-1/4 p-4">
+        <!-- Formulaire de Recherche Full Texte -->
+        <form
+          action="/recherche-texte"
+          method="GET"
+          class="bg-gray-700 rounded-lg shadow-lg p-4 mb-6"
+        >
+          <h2 class="font-bold text-lg mb-4">Recherche</h2>
+          <input
+            type="text"
+            name="texte"
+            placeholder="Chercher un monstre..."
+            class="w-full p-2 mb-4 bg-gray-800 rounded"
+          />
+          <button
+            type="submit"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full"
+          >
+            Chercher
+          </button>
+        </form>
+
+        <!-- Formulaire de Recherche par Critères -->
+        <form
+          action="/recherche-criteres"
+          method="GET"
+          class="bg-gray-700 rounded-lg shadow-lg p-4"
+        >
+          <h2 class="font-bold text-lg mb-4">Filtrer par Critères</h2>
+
+          <!-- Type -->
+          <select name="type" class="w-full p-2 mb-4 bg-gray-800 rounded">
+            <option value="" disabled selected>Choisir un type</option>
+            <option value="aquatique">Aquatique</option>
+            <option value="terrestre">Terrestre</option>
+            <option value="volant">Volant</option>
+            <option value="cosmique">Cosmique</option>
+            <option value="spectral">Spectral</option>
+          </select>
+
+          <!-- Rareté -->
+          <select name="rarete" class="w-full p-2 mb-4 bg-gray-800 rounded">
+            <option value="" disabled selected>Choisir une rareté</option>
+            <option value="commun">Commun</option>
+            <option value="rare">Rare</option>
+            <option value="epique">Épique</option>
+            <option value="legendaire">Légendaire</option>
+          </select>
+
+          <!-- PV -->
+          <div class="bg-gray-700 rounded-lg shadow-lg p-4 mb-4">
+            <h2 class="font-bold text-lg mb-4">Filtrer par PV</h2>
+            <div id="slider-pv" class="mb-4"></div>
+            <span id="slider-pv-value"></span>
+            <input type="hidden" id="min-pv" name="min_pv" />
+            <input type="hidden" id="max-pv" name="max_pv" />
+            <script>
+              var sliderPv = document.getElementById("slider-pv");
+              var minPv = document.getElementById("min-pv");
+              var maxPv = document.getElementById("max-pv");
+              var sliderPvValue = document.getElementById("slider-pv-value");
+
+              noUiSlider.create(sliderPv, {
+                start: [20, 80], // Valeurs initiales pour min et max PV
+                connect: true,
+                range: {
+                  min: 0,
+                  max: 200,
+                },
+              });
+
+              sliderPv.noUiSlider.on("update", function (values, handle) {
+                minPv.value = values[0];
+                maxPv.value = values[1];
+                sliderPvValue.innerHTML = "PV: " + values.join(" - ");
+              });
+            </script>
+          </div>
+
+          <!-- Attaque -->
+          <div class="bg-gray-700 rounded-lg shadow-lg p-4 mb-4">
+            <h2 class="font-bold text-lg mb-4">Filtrer par Attaque</h2>
+            <div id="slider-attaque" class="mb-4"></div>
+            <span id="slider-attaque-value"></span>
+            <input type="hidden" id="min-attaque" name="min_attaque" />
+            <input type="hidden" id="max-attaque" name="max_attaque" />
+            <script>
+              var sliderAttaque = document.getElementById("slider-attaque");
+              var minAttaque = document.getElementById("min-attaque");
+              var maxAttaque = document.getElementById("max-attaque");
+              var sliderAttaqueValue = document.getElementById(
+                "slider-attaque-value"
+              );
+
+              noUiSlider.create(sliderAttaque, {
+                start: [20, 80], // Valeurs initiales pour min et max Attaque
+                connect: true,
+                range: {
+                  min: 0,
+                  max: 200,
+                },
+              });
+
+              sliderAttaque.noUiSlider.on("update", function (values, handle) {
+                minAttaque.value = values[0];
+                maxAttaque.value = values[1];
+                sliderAttaqueValue.innerHTML = "Attaque: " + values.join(" - ");
+              });
+            </script>
+          </div>
+
+          <button
+            type="submit"
+            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full"
+          >
+            Appliquer les filtres
+          </button>
+        </form>
+      </aside>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-8">
+      <div class="container mx-auto text-center">
+        <p>&copy; 2024 RetroMonsters. Tous droits réservés.</p>
+      </div>
+    </footer>
+  </body>
+</html>

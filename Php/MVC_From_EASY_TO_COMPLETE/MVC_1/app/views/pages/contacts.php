@@ -1,0 +1,2 @@
+<h2>Page contacts</h2>
+<p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Alias similique amet unde expedita explicabo, minus autem maiores officiis saepe est ea ipsum voluptas placeat beatae ab facilis animi provident quod.</p>
