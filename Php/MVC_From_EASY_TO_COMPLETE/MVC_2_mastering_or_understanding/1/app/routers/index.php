@@ -10,10 +10,10 @@ error_reporting(E_ALL);
 // ROUTES DES USERS
 
 if (isset($_GET['users'])):
-    include_once "../routers/users.php";
+    include_once "../app/routers/users.php";
 
 elseif (isset($_GET['monsters'])):
-    include_once "../routers/monsters.php";
+    include_once "../app/routers/monsters.php";
 
 else: 
     // ROUTE PAR DEFAULT

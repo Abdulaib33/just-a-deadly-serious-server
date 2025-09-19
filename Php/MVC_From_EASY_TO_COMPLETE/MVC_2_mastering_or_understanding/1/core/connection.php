@@ -22,4 +22,4 @@ try {
 }
 
 
-var_dump($connexion); // THIS IS TO CHECK OUR CONNECTION 
+// var_dump($connexion); // THIS IS TO CHECK OUR CONNECTION 
