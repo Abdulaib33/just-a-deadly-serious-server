@@ -1,0 +1,34 @@
+POUR CHAQUE NOUVELLE ROUTE:
+	PATTERN: ?users
+	CTRL: usersController
+	ACTION: index
+	VIEW: index
+
+Le MVC c'est facile
+Tu pars toujours du lien
+Puis après c'est fastoche:
+Lien, Route, Action, Model, Vue
+
+	1. LIEN: Changer le href="?users" du lien
+
+	2. ROUTE: Créer la route dans le router
+	    elseif (isset($_GET['users'])) {
+	    	...
+	    }
+
+	3. ACTION: Créer l'action dans le CTRL
+		function indexAction(PDO $connexion) {
+	    	...
+	    }
+		
+
+	4. MODEL: Créer la fonction dans le MODEL
+		function findAll(PDO $connexion) {
+			...
+		}
+
+	5. VUE: Créer la VIEW
+		...
+
+
+		
